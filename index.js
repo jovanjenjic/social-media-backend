@@ -11,9 +11,23 @@ const postRoute = require("./routes/posts");
 const conversationRoute = require("./routes/conversations");
 const messageRoute = require("./routes/messages");
 const router = express.Router();
+const cors = require("cors")
 const path = require("path");
 
 dotenv.config();
+
+const whitelist = domainsFromEnv.split(",").map(item => item.trim())
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error("Not allowed by CORS"))
+    }
+  },
+  credentials: true,
+}
+app.use(cors(corsOptions))
 
 mongoose.connect(
   process.env.MONGODB_URI,
